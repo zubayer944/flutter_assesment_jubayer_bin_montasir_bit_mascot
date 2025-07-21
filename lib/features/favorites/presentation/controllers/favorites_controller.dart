@@ -47,17 +47,27 @@ class FavoritesController extends GetxController {
     }
   }
 
+  final RxBool isClearing = false.obs;
+
   Future<void> clearAllFavorites() async {
+    if (isClearing.value) return; // Prevent multiple clear operations
+    
+    isClearing.value = true;
     try {
       await FavoritesService.clearFavorites();
       favorites.clear();
-      Get.snackbar(
-        'Success',
-        'All favorites cleared',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF2A2A3E),
-        colorText: Colors.white,
-      );
+      // Show snackbar after a small delay to ensure dialog is closed
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!isClearing.value) {
+          Get.snackbar(
+            'Success',
+            'All favorites cleared',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFF2A2A3E),
+            colorText: Colors.white,
+          );
+        }
+      });
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -66,6 +76,8 @@ class FavoritesController extends GetxController {
         backgroundColor: const Color(0xFFE74C3C),
         colorText: Colors.white,
       );
+    } finally {
+      isClearing.value = false;
     }
   }
 } 
