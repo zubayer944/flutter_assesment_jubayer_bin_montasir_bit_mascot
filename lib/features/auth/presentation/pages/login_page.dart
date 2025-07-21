@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../shared/widgets/custom_button.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/field_validator.dart';
@@ -207,41 +208,15 @@ class LoginPage extends GetView<AuthController> {
 
   Widget _buildLoginButton() {
     return Obx(
-          () => Container(
+      () => CustomButton(
+        text: 'Login',
+        onPressed: controller.isLoading ? null : controller.login,
+        isLoading: controller.isLoading,
+        backgroundColor: AppColors.primary,
+        textColor: Colors.white,
         width: double.infinity,
         height: AppSizes.h50,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(AppSizes.w8),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppSizes.w8),
-            onTap: controller.isLoading ? null : controller.login,
-            child: Center(
-              child: controller.isLoading
-                  ? SizedBox(
-                width: AppSizes.w20,
-                height: AppSizes.w20,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white,
-                  ),
-                ),
-              )
-                  : Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: AppSizes.w16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
+        borderRadius: AppSizes.w8,
       ),
     );
   }
