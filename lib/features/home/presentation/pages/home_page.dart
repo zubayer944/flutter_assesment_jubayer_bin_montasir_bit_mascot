@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/cupertino.dart';
 import '../../../../core/config/app_routes.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../controllers/home_controller.dart';
@@ -11,6 +12,15 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100 && 
+          controller.hasMore && !controller.isLoadingMore) {
+        controller.loadMorePhotos();
+      }
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E), // Dark purple background
       appBar: AppBar(
@@ -30,7 +40,6 @@ class HomePage extends GetView<HomeController> {
             icon: const Icon(Icons.favorite, color: Colors.white),
             onPressed: () => AppRoutes.navigateToFavorites(),
           ),
-
         ],
       ),
       body: Obx(() {
@@ -74,21 +83,32 @@ class HomePage extends GetView<HomeController> {
         return RefreshIndicator(
           onRefresh: controller.refreshPhotos,
           child: ListView.builder(
+            controller: scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: controller.photos.length,
+            itemCount: controller.photos.length + (controller.hasMore ? 1 : 0),
             itemBuilder: (context, index) {
-              final photo = controller.photos[index];
-              return Column(
-                children: [
-                  _buildPhotoItem(photo),
-                  if (index < controller.photos.length - 1)
-                    const Divider(
-                      color: Color(0xFF333333),
-                      height: 1,
-                      thickness: 1,
-                    ),
-                ],
-              );
+              if (index < controller.photos.length) {
+                final photo = controller.photos[index];
+                return Column(
+                  children: [
+                    _buildPhotoItem(photo),
+                    if (index < controller.photos.length - 1)
+                      const Divider(
+                        color: Color(0xFF333333),
+                        height: 1,
+                        thickness: 1,
+                      ),
+                  ],
+                );
+              } else {
+                // Show loading indicator at the bottom
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: CupertinoActivityIndicator(radius: 14),
+                  ),
+                );
+              }
             },
           ),
         );
