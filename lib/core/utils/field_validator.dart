@@ -36,30 +36,4 @@ class FieldValidator {
     return null; // Valid password
   }
 
-  /// Validates both email and password
-  /// Returns map with validation results
-  static Map<String, String?> validateLoginFields({
-    required String? email,
-    required String? password,
-  }) {
-    return {
-      'email': validateEmail(email),
-      'password': validatePassword(password),
-    };
-  }
-
-  /// Checks if all validation results are null (all valid)
-  static bool isAllValid(Map<String, String?> validationResults) {
-    return validationResults.values.every((error) => error == null);
-  }
-
-  /// Gets first error message from validation results
-  static String? getFirstError(Map<String, String?> validationResults) {
-    for (String? error in validationResults.values) {
-      if (error != null) {
-        return error;
-      }
-    }
-    return null;
-  }
-} 
+}

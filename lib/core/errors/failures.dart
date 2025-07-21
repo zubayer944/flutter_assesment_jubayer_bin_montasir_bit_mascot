@@ -20,20 +20,6 @@ class ServerFailure extends Failure {
   }) : super(message: message, code: code);
 }
 
-class NetworkFailure extends Failure {
-  const NetworkFailure({
-    required String message,
-    String? code,
-  }) : super(message: message, code: code);
-}
-
-class CacheFailure extends Failure {
-  const CacheFailure({
-    required String message,
-    String? code,
-  }) : super(message: message, code: code);
-}
-
 class ValidationFailure extends Failure {
   const ValidationFailure({
     required String message,
@@ -43,13 +29,6 @@ class ValidationFailure extends Failure {
 
 class AuthenticationFailure extends Failure {
   const AuthenticationFailure({
-    required String message,
-    String? code,
-  }) : super(message: message, code: code);
-}
-
-class AuthorizationFailure extends Failure {
-  const AuthorizationFailure({
     required String message,
     String? code,
   }) : super(message: message, code: code);

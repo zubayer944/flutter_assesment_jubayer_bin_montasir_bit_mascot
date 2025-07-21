@@ -83,51 +83,6 @@ class ApiClient {
     }
   }
 
-  Future<http.Response> put(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    http.Options? options,
-    http.CancelToken? cancelToken,
-    http.ProgressCallback? onSendProgress,
-    http.ProgressCallback? onReceiveProgress,
-  }) async {
-    try {
-      final response = await _dio.put(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
-      return response;
-    } on http.DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
-  Future<http.Response> delete(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    http.Options? options,
-    http.CancelToken? cancelToken,
-  }) async {
-    try {
-      final response = await _dio.delete(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on http.DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
 
   Failure _handleDioError(http.DioException error) {
     final storage = Get.find<StorageService>();

@@ -52,12 +52,7 @@ class FavoritesService {
     return favorites.any((photo) => photo.id == photoId);
   }
   
-  // Get favorites count
-  static Future<int> getFavoritesCount() async {
-    final favorites = await getFavorites();
-    return favorites.length;
-  }
-  
+
   // Clear all favorites
   static Future<bool> clearFavorites() async {
     _storage.remove(_favoritesKey);

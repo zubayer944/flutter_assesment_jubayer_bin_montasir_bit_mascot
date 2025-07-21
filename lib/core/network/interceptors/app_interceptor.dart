@@ -31,20 +31,11 @@ class AppInterceptor extends dio.Interceptor {
 
   @override
   void onResponse(dio.Response response, dio.ResponseInterceptorHandler handler) {
-    print('✅ RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-    print('✅ RESPONSE[${response.statusCode}] => DATA: ${response.data}');
-
     handler.next(response);
   }
 
   @override
   void onError(dio.DioException err, dio.ErrorInterceptorHandler handler) {
-    print('❌ ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
-    print('❌ ERROR[${err.response?.statusCode}] => MESSAGE: ${err.message}');
-    print('❌ ERROR[${err.response?.statusCode}] => DATA: ${err.response?.data}');
-    print('❌ ERROR[EXCEPTION] => $err');
-    print('❌ ERROR[STACKTRACE] => ${err.stackTrace}');
-
     // Handle specific error cases
     if (err.response?.statusCode == 401) {
       _handleUnauthorized();

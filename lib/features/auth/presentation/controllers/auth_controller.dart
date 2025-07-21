@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_assesment_jubayer_bit_mascot/core/constants/app_sizes.dart';
 import 'package:get/get.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../../../core/utils/base_controller.dart';
@@ -44,24 +45,7 @@ class AuthController extends BaseController {
 
     await execute(() async {
       _handleLoginSuccess();
-      // final result = await loginUseCase(LoginParams(
-      //   email: emailController.text.trim(),
-      //   password: passwordController.text,
-      // ));
-
-      // result.fold(
-      //   (failure) {
-      //     _handleLoginFailure(failure);
-      //   },
-      //   (user) {
-      //     _handleLoginSuccess(user);
-      //   },
-      // );
     });
-  }
-
-  void _handleLoginFailure(Failure failure) {
-    handleFailure(failure);
   }
 
   void _handleLoginSuccess() {
