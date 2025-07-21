@@ -19,7 +19,7 @@ class AppSizes {
     _pixelRatio = _mediaQueryData.devicePixelRatio;
     _statusBarHeight = _mediaQueryData.padding.top;
     _bottomBarHeight = _mediaQueryData.padding.bottom;
-    _textScaleFactor = _mediaQueryData.textScaleFactor;
+    _textScaleFactor = _mediaQueryData.textScaler.scale(1.0);
     _devicePixelRatio = _mediaQueryData.devicePixelRatio;
     _orientation = _mediaQueryData.orientation;
   }
@@ -33,6 +33,19 @@ class AppSizes {
   static double get textScaleFactor => _textScaleFactor;
   static double get devicePixelRatio => _devicePixelRatio;
   static Orientation get orientation => _orientation;
+
+  // Responsive methods (w, h, sp)
+  static double w(double width) {
+    return _screenWidth * (width / 375); // 375 is base design width
+  }
+
+  static double h(double height) {
+    return _screenHeight * (height / 812); // 812 is base design height
+  }
+
+  static double sp(double fontSize) {
+    return fontSize * _textScaleFactor;
+  }
 
   // Width properties (w prefix)
   static double get w4 => 4.0;

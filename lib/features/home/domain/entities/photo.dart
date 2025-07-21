@@ -12,4 +12,25 @@ class Photo {
     required this.url,
     required this.thumbnailUrl,
   });
+
+  // JSON serialization methods
+  Map<String, dynamic> toJson() {
+    return {
+      'albumId': albumId,
+      'id': id,
+      'title': title,
+      'url': url,
+      'thumbnailUrl': thumbnailUrl,
+    };
+  }
+
+  factory Photo.fromJson(Map<String, dynamic> json) {
+    return Photo(
+      albumId: json['albumId'] ?? 0,
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      url: json['url'] ?? '',
+      thumbnailUrl: json['thumbnailUrl'] ?? '',
+    );
+  }
 } 

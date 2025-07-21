@@ -52,6 +52,13 @@ class AppColors {
   );
   
   // Dark Theme Colors
+  static const Color backgroundDark = Color(0xFF121212);
+  static const Color surfaceDark = Color(0xFF1E1E1E);
+  static const Color cardBackgroundDark = Color(0xFF2A2A2A);
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  static const Color textSecondaryDark = Color(0xFFB3B3B3);
+  
+  // Legacy dark theme colors (for backward compatibility)
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkSurface = Color(0xFF1E1E1E);
   static const Color darkCardBackground = Color(0xFF2A2A2A);
@@ -61,7 +68,7 @@ class AppColors {
   
   // Utility Methods
   static Color getShade(Color color, double opacity) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
   
   static Color getContrastColor(Color backgroundColor) {

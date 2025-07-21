@@ -5,6 +5,8 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/bindings/home_binding.dart';
 import '../../features/details/presentation/pages/details_page.dart';
 import '../../features/details/presentation/bindings/details_binding.dart';
+import '../../features/favorites/presentation/pages/favorites_page.dart';
+import '../../features/favorites/presentation/bindings/favorites_binding.dart';
 import '../utils/splash_page.dart';
 
 class AppRoutes {
@@ -12,6 +14,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String home = '/home';
   static const String details = '/details';
+  static const String favorites = '/favorites';
 
   static List<GetPage> getPages = [
     GetPage(
@@ -37,10 +40,17 @@ class AppRoutes {
       binding: DetailsBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage(
+      name: favorites,
+      page: () => const FavoritesPage(),
+      binding: FavoritesBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 
   static void navigateToSplash() => Get.offAllNamed(splash);
   static void navigateToLogin() => Get.offAllNamed(login);
   static void navigateToHome() => Get.offAllNamed(home);
   static void navigateToDetails(dynamic arguments) => Get.toNamed(details, arguments: arguments);
+  static void navigateToFavorites() => Get.toNamed(favorites);
 } 

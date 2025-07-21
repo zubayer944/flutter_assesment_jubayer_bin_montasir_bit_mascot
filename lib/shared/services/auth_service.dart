@@ -1,69 +1,109 @@
 import 'package:get/get.dart';
-import '../../core/storage/storage_service.dart';
+import 'package:flutter_assesment_jubayer_bit_mascot/core/storage/storage_service.dart';
 
 class AuthService extends GetxService {
-  final StorageService _storageService = Get.find<StorageService>();
+  final StorageService _storage = Get.find<StorageService>();
   
+  // Observable variables
   final RxBool _isLoggedIn = false.obs;
-  final RxString _currentUser = ''.obs;
-
+  final RxMap<String, dynamic> _userData = <String, dynamic>{}.obs;
+  
+  // Getters
   bool get isLoggedIn => _isLoggedIn.value;
-  String get currentUser => _currentUser.value;
-
+  Map<String, dynamic> get userData => _userData.value;
+  
   @override
   void onInit() {
     super.onInit();
-    _checkLoginStatus();
+    _loadAuthState();
   }
-
-  void _checkLoginStatus() {
-    _isLoggedIn.value = _storageService.isLoggedIn();
-    if (_isLoggedIn.value) {
-      final userData = _storageService.getUserData();
-      if (userData != null) {
-        _currentUser.value = userData['email'] ?? '';
+  
+  // Load authentication state from storage
+  void _loadAuthState() {
+    final token = _storage.read<String>('token');
+    final userDataString = _storage.read<String>('user_data');
+    
+    _isLoggedIn.value = token != null;
+    
+    if (userDataString != null) {
+      try {
+        _userData.value = Map<String, dynamic>.from(userDataString as Map);
+      } catch (e) {
+        _userData.value = {};
       }
     }
   }
-
-  Future<void> login(String token, String refreshToken, Map<String, dynamic> userData) async {
-    await _storageService.setToken(token);
-    await _storageService.setRefreshToken(refreshToken);
-    await _storageService.setUserData(userData);
-    
-    _isLoggedIn.value = true;
-    _currentUser.value = userData['email'] ?? '';
+  
+  // Login
+  Future<bool> login(String token, String refreshToken, Map<String, dynamic> userData) async {
+    try {
+      await _storage.write('token', token);
+      await _storage.write('refresh_token', refreshToken);
+      await _storage.write('user_data', userData);
+      
+      _isLoggedIn.value = true;
+      _userData.value = userData;
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
-
-  Future<void> logout() async {
-    await _storageService.clearAuthData();
-    
-    _isLoggedIn.value = false;
-    _currentUser.value = '';
-    
-    // Navigate to login screen
-    Get.offAllNamed('/login');
+  
+  // Logout
+  Future<bool> logout() async {
+    try {
+      await _storage.remove('token');
+      await _storage.remove('refresh_token');
+      await _storage.remove('user_data');
+      
+      _isLoggedIn.value = false;
+      _userData.value = {};
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
-
-  Future<void> refreshToken(String newToken, String newRefreshToken) async {
-    await _storageService.setToken(newToken);
-    await _storageService.setRefreshToken(newRefreshToken);
-  }
-
+  
+  // Get token
   String? getToken() {
-    return _storageService.getToken();
+    return _storage.read<String>('token');
   }
-
+  
+  // Get refresh token
   String? getRefreshToken() {
-    return _storageService.getRefreshToken();
+    return _storage.read<String>('refresh_token');
   }
-
-  Map<String, dynamic>? getUserData() {
-    return _storageService.getUserData();
+  
+  // Update user data
+  Future<bool> updateUserData(Map<String, dynamic> userData) async {
+    try {
+      await _storage.write('user_data', userData);
+      _userData.value = userData;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
-
-  void updateUserData(Map<String, dynamic> userData) {
-    _storageService.setUserData(userData);
-    _currentUser.value = userData['email'] ?? '';
+  
+  // Update token
+  Future<bool> updateToken(String token) async {
+    try {
+      await _storage.write('token', token);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  // Update refresh token
+  Future<bool> updateRefreshToken(String refreshToken) async {
+    try {
+      await _storage.write('refresh_token', refreshToken);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 } 

@@ -4,6 +4,7 @@ import '../../../../core/config/app_routes.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../controllers/home_controller.dart';
 import '../../domain/entities/photo.dart';
+import 'favorite_button.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -15,10 +16,6 @@ class HomePage extends GetView<HomeController> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A2E),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
         title: const Text(
           'Photos',
           style: TextStyle(
@@ -30,9 +27,10 @@ class HomePage extends GetView<HomeController> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.white),
-            onPressed: () => AppRoutes.navigateToLogin(),
+            icon: const Icon(Icons.favorite, color: Colors.white),
+            onPressed: () => AppRoutes.navigateToFavorites(),
           ),
+
         ],
       ),
       body: Obx(() {
@@ -174,6 +172,8 @@ class HomePage extends GetView<HomeController> {
                 ],
               ),
             ),
+            // Favorite button
+            FavoriteButton(photo: photo),
           ],
         ),
       ),

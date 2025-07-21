@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_urls.dart';
+import '../../../../core/services/favorites_service.dart';
 import '../controllers/details_controller.dart';
+import '../../../home/domain/entities/photo.dart';
 
 class DetailsPage extends GetView<DetailsController> {
   const DetailsPage({super.key});
@@ -22,6 +24,13 @@ class DetailsPage extends GetView<DetailsController> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          Obx(() {
+            final photo = controller.photoDetail.value;
+            if (photo == null) return const SizedBox.shrink();
+            return _FavoriteIcon(photoId: photo.id, photo: photo);
+          }),
+        ],
       ),
       body: Obx(() {
         final photo = controller.photoDetail.value;
@@ -155,6 +164,91 @@ class DetailsPage extends GetView<DetailsController> {
           ),
         );
       }),
+    );
+  }
+}
+
+Photo toPhoto(dynamic photo) {
+  if (photo is Photo) return photo;
+  // If PhotoDetail, convert
+  return Photo(
+    albumId: photo.albumId,
+    id: photo.id,
+    title: photo.title,
+    url: photo.url,
+    thumbnailUrl: photo.thumbnailUrl,
+  );
+}
+
+class _FavoriteIcon extends StatefulWidget {
+  final int photoId;
+  final dynamic photo;
+  const _FavoriteIcon({required this.photoId, required this.photo});
+
+  @override
+  State<_FavoriteIcon> createState() => _FavoriteIconState();
+}
+
+class _FavoriteIconState extends State<_FavoriteIcon> {
+  bool isFavorite = false;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatus();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    final status = await FavoritesService.isFavorite(widget.photoId);
+    setState(() {
+      isFavorite = status;
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      if (isFavorite) {
+        await FavoritesService.removeFromFavorites(widget.photoId);
+        Get.snackbar('Removed', 'Removed from favorites', snackPosition: SnackPosition.BOTTOM, backgroundColor: const Color(0xFF2A2A3E), colorText: Colors.white, duration: const Duration(seconds: 1));
+      } else {
+        await FavoritesService.addToFavorites(toPhoto(widget.photo));
+        Get.snackbar('Added', 'Added to favorites', snackPosition: SnackPosition.BOTTOM, backgroundColor: const Color(0xFF2A2A3E), colorText: Colors.white, duration: const Duration(seconds: 1));
+      }
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to update favorites', snackPosition: SnackPosition.BOTTOM, backgroundColor: const Color(0xFFE74C3C), colorText: Colors.white);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: isLoading
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white54,
+                strokeWidth: 2,
+              ),
+            )
+          : Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.white,
+              size: 24,
+            ),
+      onPressed: isLoading ? null : _toggleFavorite,
+      tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
     );
   }
 } 

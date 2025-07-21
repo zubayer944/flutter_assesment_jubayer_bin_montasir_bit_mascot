@@ -4,6 +4,7 @@ import '../config/app_config.dart';
 import '../constants/app_urls.dart';
 import '../errors/failures.dart';
 import 'interceptors/app_interceptor.dart';
+import '../storage/storage_service.dart';
 
 class ApiClient {
   late http.Dio _dio;
@@ -30,8 +31,8 @@ class ApiClient {
       },
     );
 
-    // Add single comprehensive interceptor
-    _dio.interceptors.add(AppInterceptor());
+    final storage = Get.find<StorageService>();
+    _dio.interceptors.add(AppInterceptor(storage));
   }
 
   http.Dio get dio => _dio;
@@ -129,6 +130,7 @@ class ApiClient {
   }
 
   Failure _handleDioError(http.DioException error) {
-    return AppInterceptor().convertToFailure(error);
+    final storage = Get.find<StorageService>();
+    return AppInterceptor(storage).convertToFailure(error);
   }
 } 

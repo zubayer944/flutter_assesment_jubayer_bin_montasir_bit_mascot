@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../config/app_routes.dart';
-import '../../shared/services/auth_service.dart';
+// import '../../shared/services/auth_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -20,14 +20,8 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _initializeApp() async {
     // Simulate loading time
     await Future.delayed(const Duration(seconds: 2));
-    
-    // Check authentication status
-    final authService = Get.find<AuthService>();
-    if (authService.isLoggedIn) {
-      AppRoutes.navigateToHome();
-    } else {
-      AppRoutes.navigateToLogin();
-    }
+    // Always navigate to login
+    AppRoutes.navigateToLogin();
   }
 
   @override
