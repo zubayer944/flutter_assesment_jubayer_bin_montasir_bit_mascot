@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,17 +13,8 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100 && 
-          controller.hasMore && !controller.isLoadingMore) {
-        controller.loadMorePhotos();
-      }
-    });
-
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E), // Dark purple background
+      backgroundColor: const Color(0xFF1A1A2E),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A2E),
         elevation: 0,
@@ -43,14 +35,6 @@ class HomePage extends GetView<HomeController> {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
-          );
-        }
-
         if (controller.hasError) {
           return Center(
             child: Column(
@@ -70,7 +54,11 @@ class HomePage extends GetView<HomeController> {
             ),
           );
         }
-
+        if (controller.photos.isEmpty && controller.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          );
+        }
         if (controller.photos.isEmpty) {
           return const Center(
             child: Text(
@@ -79,13 +67,13 @@ class HomePage extends GetView<HomeController> {
             ),
           );
         }
-
+        // Main list with loader only at the end for pagination
         return RefreshIndicator(
           onRefresh: controller.refreshPhotos,
           child: ListView.builder(
-            controller: scrollController,
+            controller: controller.scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: controller.photos.length + (controller.hasMore ? 1 : 0),
+            itemCount: controller.photos.length + (controller.hasMore.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < controller.photos.length) {
                 final photo = controller.photos[index];
@@ -101,7 +89,7 @@ class HomePage extends GetView<HomeController> {
                   ],
                 );
               } else {
-                // Show loading indicator at the bottom
+                // Bottom loader for pagination only
                 return const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Center(
@@ -117,16 +105,16 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget _buildPhotoItem(Photo photo) {
-    // Use AppUrls method for placeholder image
-    String imageUrl = AppUrls.getPlaceholderImageUrl(150, 150, id: photo.id);
-    
+    // Get a placeholder image URL from AppUrls.
+    final imageUrl = AppUrls.getPlaceholderImageUrl(150, 150, id: photo.id);
+
     return GestureDetector(
       onTap: () => AppRoutes.navigateToDetails(photo),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            // Photo Thumbnail
+            // Photo Thumbnail.
             Container(
               width: 60,
               height: 60,
@@ -139,18 +127,16 @@ class HomePage extends GetView<HomeController> {
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: const Color(0xFF444444),
-                      child: const Icon(
-                        Icons.image,
-                        color: Colors.white54,
-                        size: 30,
-                      ),
-                    );
-                  },
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
+                  errorBuilder: (_, __, ___) => Container(
+                    color: const Color(0xFF444444),
+                    child: const Icon(
+                      Icons.image,
+                      color: Colors.white54,
+                      size: 30,
+                    ),
+                  ),
+                  loadingBuilder: (_, child, progress) {
+                    if (progress == null) return child;
                     return Container(
                       color: const Color(0xFF444444),
                       child: const Center(
@@ -165,7 +151,7 @@ class HomePage extends GetView<HomeController> {
               ),
             ),
             const SizedBox(width: 16),
-            // Photo Info
+            // Photo Info.
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,11 +178,11 @@ class HomePage extends GetView<HomeController> {
                 ],
               ),
             ),
-            // Favorite button
+            // Favorite Button.
             FavoriteButton(photo: photo),
           ],
         ),
       ),
     );
   }
-} 
+}

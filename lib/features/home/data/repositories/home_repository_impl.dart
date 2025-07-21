@@ -10,9 +10,9 @@ class HomeRepositoryImpl implements HomeRepository {
   HomeRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<Photo>>> getPhotos() async {
+  Future<Either<Failure, List<Photo>>> getPhotos({int page = 1, int limit = 10}) async {
     try {
-      final photos = await remoteDataSource.getPhotos();
+      final photos = await remoteDataSource.getPhotos(page: page, limit: limit);
       return Right(photos);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
